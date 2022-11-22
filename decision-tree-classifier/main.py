@@ -12,10 +12,10 @@ from sklearn.model_selection import cross_val_score
 
 def solve_blobs():
     X, y = make_blobs(50, 1, centers=[[5, 0], [-10, 0]])
+    X_test, y_test = make_blobs(10, 1, centers=[[5, 0], [-10, 0]])
     tree = DecisionTreeClassifier(max_depth=2, min_samples_leaf=5)
     tree.fit(X, y)
-    plot_2d(tree, X, y)
-    draw_tree(tree)
+    print(tree.score(X_test, y_test))
 
 
 def solve_moons():
@@ -24,17 +24,15 @@ def solve_moons():
     X_test, y_test = make_moons(200, noise=noise)
     tree = DecisionTreeClassifier(max_depth=3, min_samples_leaf=30)
     tree.fit(X, y)
-    plot_2d(tree, X, y)
-    plot_roc_curve(y_test, tree.predict_proba(X_test))
-    draw_tree(tree)
+    print(tree.score(X_test, y_test))
 
 
 def solve_blobs_hard():
     X, y = make_blobs(1500, 2, centers=[[0, 0], [-2.5, 0], [3, 2], [1.5, -2.0]])
+    X_test, y_test = make_blobs(200, 2, centers=[[0, 0], [-2.5, 0], [3, 2], [1.5, -2.0]])
     tree = DecisionTreeClassifier(max_depth=5, min_samples_leaf=30)
     tree.fit(X, y)
-    plot_2d(tree, X, y)
-    draw_tree(tree)
+    print(tree.score(X_test, y_test))
 
 
 def best_fit():

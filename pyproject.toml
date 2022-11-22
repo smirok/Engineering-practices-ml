@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "decision-tree-classifier"
-version = "0.1.0"
+name = "hse-decision-tree-classifier"
+version = "0.1.2"
 description = ""
 authors = ["Ilya Smirnov"]
 readme = "README.md"
@@ -8,10 +8,10 @@ packages = [{include = "decision-tree-classifier"}]
 
 [tool.poetry.group.dev.dependencies]
 PyQt5 = "5.15.7"
-
-[tool.poetry.group.prod.dependencies]
-python = "^3.8"
 matplotlib = "3.6.2"
+
+[tool.poetry.dependencies]
+python = "^3.9"
 numpy = "1.23.5"
 pandas = "1.5.1"
 scikit-learn = "1.1.3"
