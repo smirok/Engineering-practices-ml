@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from src.decision_tree import DecisionTreeNode
+from decision_tree import DecisionTreeNode
 
 
 def tree_depth(tree_root):

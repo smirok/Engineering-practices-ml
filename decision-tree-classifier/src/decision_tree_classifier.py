@@ -4,8 +4,8 @@ from typing import Optional, NoReturn, List, Dict, Any, Union
 import numpy as np
 from sklearn.metrics import accuracy_score
 
-from src.decision_tree import DecisionTreeNode, DecisionTreeLeaf
-from src.predicate import gini, gain, entropy
+from decision_tree import DecisionTreeNode, DecisionTreeLeaf
+from predicate import gini, gain, entropy
 
 
 class DecisionTreeClassifier:

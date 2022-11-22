@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Ilya Smirnov"]
 readme = "README.md"
-packages = [{include = "decision_tree_classifier"}]
+packages = [{include = "decision-tree-classifier"}]
 
 [tool.poetry.group.dev.dependencies]
 PyQt5 = "5.15.7"
