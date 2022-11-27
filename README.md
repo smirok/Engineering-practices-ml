@@ -71,3 +71,15 @@ ____
   * [flake8-variables-names](https://github.com/best-doctor/flake8-variables-names)
   * [flake8-docstrings](https://github.com/pycqa/flake8-docstrings)
   * [flake8-quotes](https://github.com/zheller/flake8-quotes)
+
+Для прогона линтеров и форматирования кода при коммите или пуше в удалённый репозиторий установите pre-commit:
+
+```shell
+pre-commit install
+```
+
+Зафиксированные проблемы flake8 в файле linting.md. Обновить вручную:
+
+```shell
+flake8 decision-tree-classifier/ | sed 's/^/* /g' | sed -z 's/\n/\n\n/g' > linting.md
+````
