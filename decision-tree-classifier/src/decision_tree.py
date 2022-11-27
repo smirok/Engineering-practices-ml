@@ -35,9 +35,13 @@ class DecisionTreeNode:
         Поддерево, отвечающее за случай x[split_dim] >= split_value.
     """
 
-    def __init__(self, split_dim: int, split_value: float,
-                 left: Union['DecisionTreeNode', DecisionTreeLeaf],
-                 right: Union['DecisionTreeNode', DecisionTreeLeaf]):
+    def __init__(
+        self,
+        split_dim: int,
+        split_value: float,
+        left: Union["DecisionTreeNode", DecisionTreeLeaf],
+        right: Union["DecisionTreeNode", DecisionTreeLeaf],
+    ):
         self.split_dim = split_dim
         self.split_value = split_value
         self.left = left

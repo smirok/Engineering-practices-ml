@@ -1,11 +1,11 @@
 from copy import deepcopy
-from typing import Optional, NoReturn, List, Dict, Any, Union
+from typing import Any, Dict, List, NoReturn, Optional, Union
 
 import numpy as np
 from sklearn.metrics import accuracy_score
 
-from src.decision_tree import DecisionTreeNode, DecisionTreeLeaf
-from src.predicate import gini, gain, entropy
+from src.decision_tree import DecisionTreeLeaf, DecisionTreeNode
+from src.predicate import entropy, gain, gini
 
 
 class DecisionTreeClassifier:
@@ -19,9 +19,12 @@ class DecisionTreeClassifier:
 
     """
 
-    def __init__(self, criterion: str = "gini",
-                 max_depth: Optional[int] = None,
-                 min_samples_leaf: int = 1):
+    def __init__(
+        self,
+        criterion: str = "gini",
+        max_depth: Optional[int] = None,
+        min_samples_leaf: int = 1,
+    ):
         """
         Parameters
         ----------
@@ -54,8 +57,9 @@ class DecisionTreeClassifier:
         self.classes = np.unique(y)
         self.root = self._build_(X, y, np.arange(len(y)))
 
-    def _build_(self, X: np.ndarray, y: np.ndarray, indices: np.ndarray, depth=0) -> Union[
-        DecisionTreeNode, DecisionTreeLeaf]:
+    def _build_(
+        self, X: np.ndarray, y: np.ndarray, indices: np.ndarray, depth=0
+    ) -> Union[DecisionTreeNode, DecisionTreeLeaf]:
         if self.max_depth is not None and depth >= self.max_depth:
             return DecisionTreeLeaf(y[indices], self.classes)
 
@@ -65,12 +69,22 @@ class DecisionTreeClassifier:
         split_dim, split_value, split_pos = None, None, None
         for dim in range(n_features):
             sorted_indices = (
-            np.array(sorted(np.vstack((X[indices, dim], indices)).T, key=lambda x: x[0]))[:, 1]).astype(int)
+                np.array(
+                    sorted(np.vstack((X[indices, dim], indices)).T, key=lambda x: x[0])
+                )[:, 1]
+            ).astype(int)
 
             for i in range(n_samples - 1):  # split by <=
-                ig = gain(y[sorted_indices[:(i + 1)]], y[sorted_indices[(i + 1):]], self.criterion)
+                ig = gain(
+                    y[sorted_indices[: (i + 1)]],
+                    y[sorted_indices[(i + 1) :]],
+                    self.criterion,
+                )
 
-                if ig > best_ig and min(i + 1, n_samples - i - 1) >= self.min_samples_leaf:
+                if (
+                    ig > best_ig
+                    and min(i + 1, n_samples - i - 1) >= self.min_samples_leaf
+                ):
                     split_dim = dim
                     split_pos = i + 1
                     split_value = X[sorted_indices[split_pos], split_dim]
@@ -78,12 +92,20 @@ class DecisionTreeClassifier:
 
         if best_ig > 0:
             sorted_indices = (
-            np.array(sorted(np.vstack((X[indices, split_dim], indices)).T, key=lambda x: x[0]))[:, 1]).astype(int)
+                np.array(
+                    sorted(
+                        np.vstack((X[indices, split_dim], indices)).T,
+                        key=lambda x: x[0],
+                    )
+                )[:, 1]
+            ).astype(int)
 
-            return DecisionTreeNode(split_dim=split_dim,
-                                    split_value=split_value,
-                                    left=self._build_(X, y, sorted_indices[:split_pos], depth + 1),
-                                    right=self._build_(X, y, sorted_indices[split_pos:], depth + 1))
+            return DecisionTreeNode(
+                split_dim=split_dim,
+                split_value=split_value,
+                left=self._build_(X, y, sorted_indices[:split_pos], depth + 1),
+                right=self._build_(X, y, sorted_indices[split_pos:], depth + 1),
+            )
         else:
             return DecisionTreeLeaf(y[indices], self.classes)
 
@@ -137,6 +159,8 @@ class DecisionTreeClassifier:
         return accuracy_score(y, self.predict(X))
 
     def get_params(self, deep=False):
-        return {'criterion': 'gini' if self.criterion == gini else 'entropy',
-                'max_depth': self.max_depth,
-                'min_samples_leaf': self.min_samples_leaf}
+        return {
+            "criterion": "gini" if self.criterion == gini else "entropy",
+            "max_depth": self.max_depth,
+            "min_samples_leaf": self.min_samples_leaf,
+        }

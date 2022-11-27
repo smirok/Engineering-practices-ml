@@ -24,7 +24,7 @@ def entropy(x: np.ndarray) -> float:
     _, freqs = np.unique(x, return_counts=True)
     probs = freqs / n
 
-    return - np.sum(probs * np.log2(probs))
+    return -np.sum(probs * np.log2(probs))
 
 
 def gain(left_y: np.ndarray, right_y: np.ndarray, criterion: Callable) -> float:
@@ -42,4 +42,8 @@ def gain(left_y: np.ndarray, right_y: np.ndarray, criterion: Callable) -> float:
     """
 
     y = np.hstack((left_y, right_y))
-    return len(y) * criterion(y) - len(left_y) * criterion(left_y) - len(right_y) * criterion(right_y)
+    return (
+        len(y) * criterion(y)
+        - len(left_y) * criterion(left_y)
+        - len(right_y) * criterion(right_y)
+    )
