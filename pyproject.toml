@@ -11,6 +11,13 @@ PyQt5 = "5.15.7"
 matplotlib = "3.6.2"
 black = "22.10.0"
 isort = "5.10.1"
+flake8 = "5.0.4"
+flake8-simplify = "0.19.3"
+flake8-return = "1.2.0"
+pep8-naming = "0.13.2"
+flake8-variables-names = "0.0.2"
+flake8-docstrings = "1.6.0"
+flake8-quotes = "3.3.1"
 
 [tool.poetry.dependencies]
 python = "^3.9"
