@@ -1,22 +1,22 @@
+"""Decision tree classifier."""
+
 from copy import deepcopy
 from typing import Any, Dict, List, NoReturn, Optional, Union
 
 import numpy as np
 from sklearn.metrics import accuracy_score
-
 from src.decision_tree import DecisionTreeLeaf, DecisionTreeNode
 from src.predicate import entropy, gain, gini
 
 
 class DecisionTreeClassifier:
     """
+    Class for classification using decision tree.
+
     Attributes
     ----------
     root : Union[DecisionTreeNode, DecisionTreeLeaf]
         Корень дерева.
-
-    (можете добавлять в класс другие аттрибуты).
-
     """
 
     def __init__(
@@ -26,58 +26,60 @@ class DecisionTreeClassifier:
         min_samples_leaf: int = 1,
     ):
         """
+        Classifier initialization.
+
         Parameters
         ----------
         criterion : str
-            Задает критерий, который будет использоваться при построении дерева.
-            Возможные значения: "gini", "entropy".
+            Задает критерий, который будет использоваться при построении дерева
+            Возможные значения: "gini", "entropy"
         max_depth : Optional[int]
-            Ограничение глубины дерева. Если None - глубина не ограничена.
+            Ограничение глубины дерева. Если None - глубина не ограничена
         min_samples_leaf : int
-            Минимальное количество элементов в каждом листе дерева.
-
+            Минимальное количество элементов в каждом листе дерева
         """
         self.root = None
         self.criterion = gini if criterion == "gini" else entropy
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> NoReturn:
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray) -> NoReturn:
         """
         Строит дерево решений по обучающей выборке.
 
         Parameters
         ----------
-        X : np.ndarray
+        x_train : np.ndarray
             Обучающая выборка.
-        y : np.ndarray
+        y_train : np.ndarray
             Вектор меток классов.
         """
-
-        self.classes = np.unique(y)
-        self.root = self._build_(X, y, np.arange(len(y)))
+        self.classes = np.unique(y_train)
+        self.root = self._build_(x_train, y_train, np.arange(len(y_train)))
 
     def _build_(
-        self, X: np.ndarray, y: np.ndarray, indices: np.ndarray, depth=0
+        self, x_data: np.ndarray, y_data: np.ndarray, indices: np.ndarray, depth=0
     ) -> Union[DecisionTreeNode, DecisionTreeLeaf]:
         if self.max_depth is not None and depth >= self.max_depth:
-            return DecisionTreeLeaf(y[indices], self.classes)
+            return DecisionTreeLeaf(y_data[indices], self.classes)
 
-        n_samples, n_features = len(indices), X.shape[1]
+        n_samples, n_features = len(indices), x_data.shape[1]
 
         best_ig = 0
         split_dim, split_value, split_pos = None, None, None
         for dim in range(n_features):
             sorted_indices = (
                 np.array(
-                    sorted(np.vstack((X[indices, dim], indices)).T, key=lambda x: x[0])
+                    sorted(
+                        np.vstack((x_data[indices, dim], indices)).T, key=lambda x: x[0]
+                    )
                 )[:, 1]
             ).astype(int)
 
             for i in range(n_samples - 1):  # split by <=
                 ig = gain(
-                    y[sorted_indices[: (i + 1)]],
-                    y[sorted_indices[(i + 1) :]],
+                    y_data[sorted_indices[: (i + 1)]],
+                    y_data[sorted_indices[(i + 1) :]],
                     self.criterion,
                 )
 
@@ -87,14 +89,14 @@ class DecisionTreeClassifier:
                 ):
                     split_dim = dim
                     split_pos = i + 1
-                    split_value = X[sorted_indices[split_pos], split_dim]
+                    split_value = x_data[sorted_indices[split_pos], split_dim]
                     best_ig = ig
 
         if best_ig > 0:
             sorted_indices = (
                 np.array(
                     sorted(
-                        np.vstack((X[indices, split_dim], indices)).T,
+                        np.vstack((x_data[indices, split_dim], indices)).T,
                         key=lambda x: x[0],
                     )
                 )[:, 1]
@@ -103,34 +105,37 @@ class DecisionTreeClassifier:
             return DecisionTreeNode(
                 split_dim=split_dim,
                 split_value=split_value,
-                left=self._build_(X, y, sorted_indices[:split_pos], depth + 1),
-                right=self._build_(X, y, sorted_indices[split_pos:], depth + 1),
+                left=self._build_(
+                    x_data, y_data, sorted_indices[:split_pos], depth + 1
+                ),
+                right=self._build_(
+                    x_data, y_data, sorted_indices[split_pos:], depth + 1
+                ),
             )
-        else:
-            return DecisionTreeLeaf(y[indices], self.classes)
 
-    def predict_proba(self, X: np.ndarray) -> List[Dict[Any, float]]:
+        return DecisionTreeLeaf(y_data[indices], self.classes)
+
+    def predict_proba(self, x_data: np.ndarray) -> List[Dict[Any, float]]:
         """
-        Предсказывает вероятность классов для элементов из X.
+        Предсказывает вероятность классов для элементов из x_data.
 
         Parameters
         ----------
-        X : np.ndarray
+        x_data : np.ndarray
             Элементы для предсказания.
 
         Return
         ------
         List[Dict[Any, float]]
-            Для каждого элемента из X возвращает словарь
+            Для каждого элемента из x_data возвращает словарь
             {метка класса -> вероятность класса}.
         """
-
         ans = []
-        for x in X:
+        for x_elem in x_data:
             node = deepcopy(self.root)
 
             while isinstance(node, DecisionTreeNode):
-                if x[node.split_dim] <= node.split_value:
+                if x_elem[node.split_dim] <= node.split_value:
                     node = node.left
                 else:
                     node = node.right
@@ -138,29 +143,37 @@ class DecisionTreeClassifier:
             ans.append(node.probs)
         return ans
 
-    def predict(self, X: np.ndarray) -> list:
+    def predict(self, x_data: np.ndarray) -> list:
         """
-        Предсказывает классы для элементов X.
+        Предсказывает классы для элементов x_data.
 
         Parameters
         ----------
-        X : np.ndarray
+        x_data : np.ndarray
             Элементы для предсказания.
 
         Return
         ------
         list
-            Вектор предсказанных меток для элементов X.
+            Вектор предсказанных меток для элементов x_data.
         """
-        proba = self.predict_proba(X)
+        proba = self.predict_proba(x_data)
         return [max(p.keys(), key=lambda k: p[k]) for p in proba]
 
-    def score(self, X: np.ndarray, y: np.ndarray):
-        return accuracy_score(y, self.predict(X))
+    def score(self, x_data: np.ndarray, y_data: np.ndarray):
+        """
+        Считает accuracy score для элементов x_data и исходных меток y_data.
 
-    def get_params(self, deep=False):
-        return {
-            "criterion": "gini" if self.criterion == gini else "entropy",
-            "max_depth": self.max_depth,
-            "min_samples_leaf": self.min_samples_leaf,
-        }
+        Parameters
+        ----------
+        x_data : np.ndarray
+            Элементы для предсказания.
+        y_data: np.ndarray
+            Исходные метки элементов.
+
+        Return
+        ------
+        list
+            Вектор предсказанных меток для элементов x_data.
+        """
+        return accuracy_score(y_data, self.predict(x_data))

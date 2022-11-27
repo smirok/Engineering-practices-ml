@@ -70,7 +70,7 @@ ____
   * [pep8-naming](https://github.com/PyCQA/pep8-naming)
   * [flake8-variables-names](https://github.com/best-doctor/flake8-variables-names)
   * [flake8-docstrings](https://github.com/pycqa/flake8-docstrings)
-  * [flake8-quotes](https://github.com/zheller/flake8-quotes)
+  * [flake8-unused-arguments](https://github.com/nhoad/flake8-unused-arguments)
 
 Для прогона линтеров и форматирования кода при коммите или пуше в удалённый репозиторий установите pre-commit:
 
