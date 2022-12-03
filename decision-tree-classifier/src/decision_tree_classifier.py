@@ -160,6 +160,15 @@ class DecisionTreeClassifier:
         proba = self.predict_proba(x_data)
         return [max(p.keys(), key=lambda k: p[k]) for p in proba]
 
+    def get_params(self, deep=False):
+        """Возвращает параметры модели."""
+        deep
+        return {
+            "criterion": "gini" if self.criterion == gini else "entropy",
+            "max_depth": self.max_depth,
+            "min_samples_leaf": self.min_samples_leaf,
+        }
+
     def score(self, x_data: np.ndarray, y_data: np.ndarray):
         """
         Считает accuracy score для элементов x_data и исходных меток y_data.
