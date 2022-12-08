@@ -6,6 +6,7 @@
 
 1. [Установка и запуск](#Установка-и-запуск)
 2. [СodeStyle](#CodeStyle)
+3. [DVC](#DVC)
 
 ____
 
@@ -83,3 +84,17 @@ pre-commit install
 ```shell
 flake8 decision-tree-classifier/ | sed 's/^/* /g' | sed -z 's/\n/\n\n/g' > linting.md
 ````
+
+____
+
+## DVC
+
+Для контроля версий данных и моделей используется [DVC](https://dvc.org/)
+
+Отслеживаются:
+* датасет для обучения и тестирования классификатора
+* лучшая модель после подбора гиперпараметров
+* лучшие гиперпараметры
+* accuracy на тестовой выборке
+
+[Ссылка](https://studio.iterative.ai/user/smirok/projects/Engineering-practices-ml-qpjahx1v32) на страницу проекта в DVC IterativeStudio

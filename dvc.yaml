@@ -1,0 +1,17 @@
+stages:
+  run:
+    cmd: python decision-tree-classifier/main.py
+    deps:
+      - decision-tree-classifier/main.py
+    params:
+      - decision-tree-classifier/evaluation/params.yaml:
+        - criterion
+        - max_depth
+        - min_samples_leaf
+    outs:
+      - decision-tree-classifier/data/model/model.pkl
+      - decision-tree-classifier/evaluation/plots/metrics:
+          cache: false
+    metrics:
+      - decision-tree-classifier/evaluation/metrics.json:
+          cache: false
