@@ -89,7 +89,7 @@ ____
 
 ## DVC
 
-Для контроля версий данных и моделей используется [DVC](https://dvc.org/)
+Для контроля версий данных и моделей, воспроизведений пайплайна используется [DVC](https://dvc.org/)
 
 Отслеживаются:
 * датасет для обучения и тестирования классификатора
@@ -98,3 +98,15 @@ ____
 * accuracy на тестовой выборке
 
 [Ссылка](https://studio.iterative.ai/user/smirok/projects/Engineering-practices-ml-qpjahx1v32) на страницу проекта в DVC IterativeStudio
+
+DAG пайплайна - 4 бамбука:
+* `fit` -> `predict` (обучение классификатора на основе решающего дерева и дальнейшее предсказание с датасетом train.csv)
+* `train_blobs` -> `validate_blobs` (игрушечный пример классификации решающим деревом на sklearn.blobs)
+* `train_moons` -> `validate_moons` (игрушечный пример классификации решающим деревом на sklearn.moons)
+* `train_blobs_hard` -> `validate_blobs_hard` (более сложный пример классификации решающим деревом на sklearn.blobs)
+
+Для запуска пайплайна выполните:
+
+```shell
+dvc repro
+```
