@@ -1,0 +1,54 @@
+stages:
+  train_blobs:
+    cmd: python3.9 train_blobs.py
+    deps:
+      - train_blobs.py
+    outs:
+      - data/model/tree_blobs.pkl
+  validate_blobs:
+    cmd: python3.9 validate_blobs.py
+    deps:
+      - validate_blobs.py
+      - data/model/tree_blobs.pkl
+  train_moons:
+    cmd: python3.9 train_moons.py
+    deps:
+      - train_moons.py
+    outs:
+      - data/model/tree_moons.pkl
+  validate_moons:
+    cmd: python3.9 validate_moons.py
+    deps:
+      - validate_moons.py
+      - data/model/tree_moons.pkl
+  train_blobs_hard:
+    cmd: python3.9 train_blobs_hard.py
+    deps:
+      - train_blobs_hard.py
+    outs:
+      - data/model/tree_blobs_hard.pkl
+  validate_blobs_hard:
+    cmd: python3.9 validate_blobs_hard.py
+    deps:
+      - validate_blobs_hard.py
+      - data/model/tree_blobs_hard.pkl
+  fit:
+    cmd: python3.9 fit.py
+    deps:
+      - fit.py
+    params:
+      - evaluation/params.yaml:
+          - criterion
+          - max_depth
+          - min_samples_leaf
+    outs:
+      - data/model/model.pkl
+      - evaluation/params.yaml
+  predict:
+    cmd: python3.9 predict.py
+    deps:
+      - predict.py
+      - data/model/model.pkl
+    metrics:
+      - evaluation/metrics.json:
+          cache: false
